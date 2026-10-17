@@ -18,11 +18,23 @@ The learning loop is adapted from VibeWise: you reason first, and the AI gives f
 - The `reverse-engineer-anything` skill and the REA MCP server (`npx -y rea-agents mcp`) for teardowns. See the [REA README](https://github.com/morluto/rea).
 - Teaching, the product lens and the journal work without them, for example on ordinary source repos.
 
-## Install
+## Install on a new device
+
+Both repos are private, so first log in to GitHub on the device (`gh auth login`).
 
 ```bash
-npx skills add k4kd/reverse-learn-kunal -g
+# 1. The skill: clone it once, then link it into each agent's skills folder
+git clone https://github.com/k4kd/reverse-learn-kunal.git ~/code/reverse-learn-kunal
+ln -s ~/code/reverse-learn-kunal/skills/reverse-learn-kunal ~/.claude/skills/reverse-learn-kunal   # Claude Code
+ln -s ~/code/reverse-learn-kunal/skills/reverse-learn-kunal ~/.codex/skills/reverse-learn-kunal    # Codex (other agents: their skills dir)
+
+# 2. The journal (the skill also clones this itself on first use)
+git clone https://github.com/k4kd/learning-journal.git ~/learning-journal
 ```
+
+Update with `git -C ~/code/reverse-learn-kunal pull`. The journal pulls at the start of every session and pushes at the end, so progress follows you between devices.
+
+`npx skills add k4kd/reverse-learn-kunal -g` also works if your git credentials can read private repos. It makes a copy, though, so curriculum additions won't sync back.
 
 ## Use
 

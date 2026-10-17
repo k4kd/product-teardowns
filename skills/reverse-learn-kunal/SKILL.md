@@ -25,9 +25,14 @@ The user learns engineering by taking apart things that already ship. Every sess
 ## The loop
 
 ### 0. Resume the journal
-The journal lives in `~/learning-journal/` (one global folder across all targets). If `profile.md` exists, read it (including its `Revisit` list), then search `progress.md` for `Needs reinforcement` entries. Open the session by bringing one of them back if it's relevant to today's target.
+The journal lives in `~/learning-journal/`. It is a git clone of the private repo `k4kd/learning-journal`, which keeps learning in sync across devices and agents. Sync it first:
 
-If the folder is missing, this is the first run. Ask three questions, one at a time: (1) your current level in systems/infra, algorithms and code (beginner / intermediate / advanced each), (2) what you want to be able to do in a year, (3) how deep you want explanations to go by default. Then create the files using the templates at the end of [teaching.md](references/teaching.md). Create only the files that are missing. Never overwrite existing journal files. Edit them in place.
+- If the folder is missing, run `git clone https://github.com/k4kd/learning-journal.git ~/learning-journal`. If the clone fails (no network, or no GitHub access), tell the user, work from a local folder, and push later.
+- Otherwise run `git -C ~/learning-journal pull --rebase --quiet`. If the pull fails, report it and continue with the local copy. Never discard local changes.
+
+If `profile.md` exists, read it (including its `Revisit` list), then search `progress.md` for `Needs reinforcement` entries. Open the session by bringing one of them back if it's relevant to today's target.
+
+If `profile.md` is missing, this is the first run. Ask three questions, one at a time: (1) your current level in systems/infra, algorithms and code (beginner / intermediate / advanced each), (2) what you want to be able to do in a year, (3) how deep you want explanations to go by default. Then create the files using the templates at the end of [teaching.md](references/teaching.md). Create only the files that are missing. Never overwrite existing journal files. Edit them in place.
 
 ### 1. Intake
 Ask what the target is (path, app, URL, package), confirm that the user owns it or is allowed to study it, and ask for the one question driving the session ("how does X make Y so fast?"). If they have no question, offer three candidate questions based on what the target is and let them pick.
@@ -54,6 +59,8 @@ Update the journal before ending (format in [teaching.md](references/teaching.md
 - `teardowns.md`: one line with date, target, driving question and the top lesson.
 - `progress.md`: per concept, list what was introduced, what the user demonstrated (their reasoning, briefly), what needs reinforcement, and the resources assigned, with the date and target.
 - `profile.md`: move concepts between Strong / Developing / Revisit **only on evidence of the user's own reasoning**. Agreeing with you or clicking an option is not evidence of understanding. Never invent learning history.
+
+Then sync: `git -C ~/learning-journal add -A && git -C ~/learning-journal commit -m "<date> <target>: <concepts>" && git -C ~/learning-journal push`. If the push is rejected, run `pull --rebase` and push again. If a merge conflict remains, resolve it by keeping both sides' entries (the journal is append-and-edit Markdown), or ask the user if the two sides contradict each other. Say whether the sync succeeded. Never force-push. Only the journal is pushed. Never commit target files, binaries or secrets to it.
 
 End with a short **Next**: one resource to work through before the next session, and one target that would deepen today's concept (for example "now tear down Linear's sync engine to compare with Figma's").
 
