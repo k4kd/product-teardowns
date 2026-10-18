@@ -9,7 +9,8 @@ Point it at something that ships, such as an app, a binary, an Electron `.asar`,
 3. **judges** what's worth your attention through the [build-products-kunal](https://github.com/k4kd/build-products-kunal) lens (steal / study / skip),
 4. **teaches** the infra, system-design and novel-algorithm concepts behind it, in plain English first and then technical terms,
 5. links **mastery-level resources** (Karpathy Zero to Hero, DDIA, MIT/CMU courses) for each concept,
-6. **logs** what you learned in `~/learning-journal/`, so later sessions build on earlier ones.
+6. ends with a **teardown report** written to pass a readability test by the weakest model (Haiku), saved in your journal,
+7. **logs** what you learned in `~/learning-journal/`, so later sessions build on earlier ones.
 
 The learning loop is adapted from VibeWise: you reason first, and the AI gives feedback.
 
@@ -49,6 +50,7 @@ skills/reverse-learn-kunal/
   SKILL.md
   references/teaching.md      # concept ladder, callouts, journal templates
   references/product-lens.md  # steal / study / skip table
+  references/report.md        # final report: structure, writing rules, Haiku readability test
   references/curriculum.md    # tracks → start / deep / mastery resources
 ```
 

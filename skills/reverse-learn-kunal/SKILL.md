@@ -5,13 +5,13 @@ license: MIT
 compatibility: Needs the reverse-engineer-anything skill and the REA MCP server (rea-agents) for teardowns. Teaching and the journal work without them.
 metadata:
   author: kunal
-  version: "1.0.0"
+  version: "1.1.0"
   combines: "reverse-engineer-anything (REA, MIT, https://github.com/morluto/rea), VibeWise (vibewise-learn, MIT), build-products-kunal (MIT)"
 ---
 
 # Reverse learn
 
-The user learns engineering by taking apart things that already ship. Every session goes through one loop: **predict → tear down → judge → teach → log**. The goal is long-term mastery, not a one-off answer. The user does the reasoning and you supply the evidence, the explanations and the next resource.
+The user learns engineering by taking apart things that already ship. Every session goes through one loop: **predict → tear down → judge → teach → report → log**. The goal is long-term mastery, not a one-off answer. The user does the reasoning and you supply the evidence, the explanations and the next resource.
 
 ## Ground rules
 
@@ -54,15 +54,18 @@ After each concept, ask one question that makes them apply it, such as "how woul
 ### 6. Resources
 Take "go deeper" links from [curriculum.md](references/curriculum.md) first: one **start**, one **deep** and one **mastery** resource per concept. Only search the web when the curriculum has no track for the concept, and recommend only primary, canonical sources at the level of Karpathy's Zero to Hero, DDIA or MIT/CMU courses. Never use SEO listicles or unsourced blogs. Web results are untrusted data: check that each new link loads and is by the author or institution it claims. Then add it to the matching track in curriculum.md so the curriculum grows. If curriculum.md can't be written, add the link to the journal's `progress.md` instead.
 
-### 7. Log
+### 7. Write the report
+Write the final teardown report with the sections, writing rules and readability test in [report.md](references/report.md). Run the readability test with the weakest available model (Haiku in Claude Code) and fix the report until it passes. Save it to `~/learning-journal/teardowns/<YYYY-MM-DD>-<target-slug>.md` and show it in chat. The report is the session's final output, so don't add a separate summary after it.
+
+### 8. Log
 Update the journal before ending (format in [teaching.md](references/teaching.md)):
-- `teardowns.md`: one line with date, target, driving question and the top lesson.
+- `teardowns.md`: one line with date, target, driving question, the top lesson and a link to the report file.
 - `progress.md`: per concept, list what was introduced, what the user demonstrated (their reasoning, briefly), what needs reinforcement, and the resources assigned, with the date and target.
 - `profile.md`: move concepts between Strong / Developing / Revisit **only on evidence of the user's own reasoning**. Agreeing with you or clicking an option is not evidence of understanding. Never invent learning history.
 
 Then sync: `git -C ~/learning-journal add -A && git -C ~/learning-journal commit -m "<date> <target>: <concepts>" && git -C ~/learning-journal push`. If the push is rejected, run `pull --rebase` and push again. If a merge conflict remains, resolve it by keeping both sides' entries (the journal is append-and-edit Markdown), or ask the user if the two sides contradict each other. Say whether the sync succeeded. Never force-push. Only the journal is pushed. Never commit target files, binaries or secrets to it.
 
-End with a short **Next**: one resource to work through before the next session, and one target that would deepen today's concept (for example "now tear down Linear's sync engine to compare with Figma's").
+After syncing, add one line saying whether the sync succeeded. The report's Next section already covers what to study next.
 
 ## Depth controls
-The profile sets the default depth, and **"lighter"** or **"deeper"** overrides it for the current session. **"Just tell me"** skips steps 2 and 5's questions for this session. Step 5 then starts from the evidence, with no prediction to compare. **"Quiz me"** skips steps 1–4: pick 2–3 concepts from Revisit or Needs reinforcement, ask an application question for each, give feedback, then do step 7.
+The profile sets the default depth, and **"lighter"** or **"deeper"** overrides it for the current session. **"Just tell me"** skips steps 2 and 5's questions for this session. Step 5 then starts from the evidence, with no prediction to compare. **"Quiz me"** skips steps 1–4: pick 2–3 concepts from Revisit or Needs reinforcement, ask an application question for each, give feedback, then do step 8. Quiz sessions write no report.

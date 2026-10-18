@@ -82,5 +82,5 @@ Each concept gets its own section, which is updated in place and never duplicate
 ```markdown
 # Teardowns
 
-- <date> · <target> · Q: <driving question> · Lesson: <top lesson>
+- <date> · <target> · Q: <driving question> · Lesson: <top lesson> · [report](teardowns/<YYYY-MM-DD>-<target-slug>.md)
 ```
