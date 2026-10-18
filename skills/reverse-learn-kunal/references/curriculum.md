@@ -2,6 +2,8 @@
 
 These tracks are the path to mastery. For each concept you teach, pick one **Start** (gentle, intuition-first), one **Deep** (a proper course or book) and one **Mastery** resource (the primary source, a paper or the hardest canonical text) from the matching track. Add new sources only if they are canonical and you have checked that the link loads. Every link here returned HTTP 200 on 2026-10-18.
 
+Within each track, resources are listed in learning order. Don't give a Deep or Mastery resource before the track's Start unless the profile marks that foundation Strong. Check what each resource assumes before giving it, and never give one that starts midway.
+
 The bar for a source is Karpathy's Zero to Hero: built from first principles by someone who has done the work, free or canonical, and still worth it in five years.
 
 ## Reverse engineering

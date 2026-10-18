@@ -10,6 +10,8 @@ Climb only as high as the user's level for that topic needs: beginners get every
 
 **✦ Concept: <name>**
 
+*Builds on:* the foundations this needs, and whether the user has each one (marked Strong) or the session just covered it. Never leave one unmet.
+
 1. **Plain English.** One analogy from everyday life, with no jargon. ("A cache is keeping the milk in the fridge instead of driving to the store each time.")
 2. **How it works.** The mechanism in 3–6 sentences, defining each new term in bold on first use. A small ASCII diagram if it helps, with unknown parts left as `?`.
 3. **Technical.** Precise vocabulary, trade-offs, complexity (time/space/latency/cost), failure modes and when *not* to use it.

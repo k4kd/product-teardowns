@@ -24,13 +24,14 @@ Each part builds only on what came before it. Use these headings, in plain words
 
    Narrate each diagram in plain sentences.
 
-5. **The clever parts.** Cover 1–3 concepts or algorithms, each one a mini-story with these beats:
+5. **The clever parts.** Cover 1–3 concepts or algorithms, foundation first: if one part depends on another, the one it depends on comes first. Each one is a mini-story with these beats:
+   - **What this builds on:** one sentence linking it to something the reader already knows or just read in the story ("you just saw messages wait in line; this is how that line is managed").
    - **Start with something familiar:** an everyday situation with the same shape as the problem ("a restaurant kitchen where orders pile up faster than the chef can cook").
    - **The problem it solves here,** in this product's terms.
    - **How it works, shown:** a flow diagram of the logic. For an algorithm, add a **step-by-step trace table** that shows how each variable or piece of data changes on a small real example.
    - **Now the real words:** the technical terms, each tied to the familiar version ("engineers call that pile of orders a *queue*"). Then trade-offs, cost and when it breaks.
    - **Where we saw it:** the files, functions or behaviour in the target, in plain words, with how sure we are (seen in the code / our best guess / not known).
-   - **If you want to master this:** exactly 3 resources, never more (start, deeper, mastery), each with one sentence saying what you'll get from it. For a concept you've met before, start from your current tier.
+   - **If you want to master this:** exactly 3 resources, never more (start, deeper, mastery), each with one sentence saying what you'll get from it and what it assumes you already know, which you do. Give the exact starting point when only part of a resource fits ("lectures 1–3"). For a concept you've met before, start from your current tier.
 
 6. **What you guessed vs what we found.** Skip this if there was no guess. Say what was right, what was missed, and why the real design makes sense. Be kind and specific.
 
