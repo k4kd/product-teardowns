@@ -9,7 +9,7 @@ Point it at something that ships, such as an app, a binary, an Electron `.asar`,
 3. **judges** what's worth your attention through the [build-products-kunal](https://github.com/k4kd/build-products-kunal) lens (steal / study / skip),
 4. **teaches** the infra, system-design and novel-algorithm concepts behind it, in plain English first and then technical terms,
 5. links **mastery-level resources** (Karpathy Zero to Hero, DDIA, MIT/CMU courses) for each concept,
-6. ends with a **teardown report** written to pass a readability test by the weakest model (Haiku), saved in your journal,
+6. ends with a **story-style report** in everyday language, with a written explanation, then architecture, user-flow, data-flow and algorithm diagrams, checked to be readable by the weakest model (Haiku) and saved in your journal,
 7. **logs** what you learned in `~/learning-journal/`, so later sessions build on earlier ones.
 
 The learning loop is adapted from VibeWise: you reason first, and the AI gives feedback.
@@ -39,6 +39,7 @@ Update with `git -C ~/code/reverse-learn-kunal pull`. The journal pulls at the s
 
 ## Use
 
+- "Run reverse-learn-kunal on openclaw" (just a name: it finds and fetches the target itself, without running it)
 - "Use reverse-learn-kunal on /Applications/Linear.app. How does it sync so fast?"
 - "Tear down this APK and teach me how its offline mode works."
 - "Quiz me" (reviews concepts from your journal without a new target)
