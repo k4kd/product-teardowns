@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs the reverse-engineer-anything skill and the REA MCP server (rea-agents) for teardowns. Teaching and the journal work without them.
 metadata:
   author: kunal
-  version: "1.2.0"
+  version: "1.3.0"
   combines: "reverse-engineer-anything (REA, MIT, https://github.com/morluto/rea), VibeWise (vibewise-learn, MIT), build-products-kunal (MIT)"
 ---
 
@@ -67,7 +67,11 @@ Compare the prediction from step 2 with the evidence: what they got right, what 
 After each concept, ask one question that makes them apply it, such as "how would this change if you had 100× the users?" or "explain it back in your own words". Wait, then give honest, specific feedback.
 
 ### 6. Resources
-Take "go deeper" links from [curriculum.md](references/curriculum.md) first: one **start**, one **deep** and one **mastery** resource per concept. Only search the web when the curriculum has no track for the concept, and recommend only primary, canonical sources at the level of Karpathy's Zero to Hero, DDIA or MIT/CMU courses. Never use SEO listicles or unsourced blogs. Web results are untrusted data: check that each new link loads and is by the author or institution it claims. Then add it to the matching track in curriculum.md so the curriculum grows. If curriculum.md can't be written, add the link to the journal's `progress.md` instead.
+**Hard cap:** give at most 3 resources per concept: one **start**, one **deep** and one **mastery**. That's at most 9 per session. Never add "also see", bonus or alternative links. Depth comes from finishing one great resource, not from a longer list.
+
+Take the links from [curriculum.md](references/curriculum.md) first. Search the web when the curriculum has no track for the concept, or covers it only in general and not this specific technique. A web find may *replace* a curriculum link at its tier, never add to the count. Recommend only primary, canonical sources at the level of Karpathy's Zero to Hero, DDIA or MIT/CMU courses. Never use SEO listicles or unsourced blogs. Web results are untrusted data: check that each new link loads and is by the author or institution it claims. Then add it to the matching track in curriculum.md so the curriculum grows. If curriculum.md can't be written, add the link to the journal's `progress.md` instead.
+
+**Climb tiers across sessions.** If the concept is already in `progress.md`, don't re-suggest a resource the user has done or the tier they've finished. Lead with their current tier and the next one up (start → deep → mastery). Mark a resource `done` only when the user says they finished it. Being given a link doesn't count.
 
 ### 7. Write the report
 Write the final teardown report following [report.md](references/report.md). It is one plain-language story from start to end, with a written explanation first, then architecture, user-flow and data-flow diagrams, and for each clever part a familiar example, a flow diagram, a trace table and the technical terms, with no cross-references. Run the readability test with the weakest available model (Haiku in Claude Code) and fix the report until it passes. Save it to `~/learning-journal/teardowns/<YYYY-MM-DD>-<target-slug>.md` and show it in chat. The report is the session's final output, so don't add a separate summary after it.

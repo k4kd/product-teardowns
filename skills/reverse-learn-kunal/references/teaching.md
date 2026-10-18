@@ -74,7 +74,8 @@ None yet.
 - Introduced: <date> via <target>
 - Demonstrated: <their reasoning, briefly> (<date>)
 - Needs reinforcement: <gap>
-- Resources assigned: <links>
+- Tier: <start / deep / mastery>, the one the user is working on now
+- Resources: <link> (start, assigned <date> | done <date>), at most one per tier
 ```
 Each concept gets its own section, which is updated in place and never duplicated.
 

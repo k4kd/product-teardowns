@@ -30,7 +30,7 @@ Each part builds only on what came before it. Use these headings, in plain words
    - **How it works, shown:** a flow diagram of the logic. For an algorithm, add a **step-by-step trace table** that shows how each variable or piece of data changes on a small real example.
    - **Now the real words:** the technical terms, each tied to the familiar version ("engineers call that pile of orders a *queue*"). Then trade-offs, cost and when it breaks.
    - **Where we saw it:** the files, functions or behaviour in the target, in plain words, with how sure we are (seen in the code / our best guess / not known).
-   - **If you want to master this:** 3 resources (start, deeper, mastery), each with one sentence saying what you'll get from it.
+   - **If you want to master this:** exactly 3 resources, never more (start, deeper, mastery), each with one sentence saying what you'll get from it. For a concept you've met before, start from your current tier.
 
 6. **What you guessed vs what we found.** Skip this if there was no guess. Say what was right, what was missed, and why the real design makes sense. Be kind and specific.
 
@@ -38,7 +38,7 @@ Each part builds only on what came before it. Use these headings, in plain words
 
 8. **What we still don't know.** Each open question on one line, with what would answer it.
 
-9. **What to do next.** One thing to study and one thing to take apart next, each with a reason.
+9. **What to do next.** Exactly one resource to study (the most useful one from the clever parts) and one thing to take apart next, each with a reason.
 
 10. **Where this came from.** This is the only reference list, and the story never points to it. List the target and version, the REA evidence IDs, and the files read. A reader can skip it and miss nothing.
 
