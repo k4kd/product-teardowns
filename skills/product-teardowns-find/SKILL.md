@@ -28,6 +28,8 @@ Ask the user (one question, with options) when any of these is true:
 
 For each option, give a one-line description, its stars or downloads, and its owner. Never guess when two candidates are plausible.
 
+**Before fetching:** once the product and its slug are clear, hand back to the orchestrator for its resume check. An earlier run of this product may exist, and the orchestrator decides whether to resume, add a mode, or start over before anything is written.
+
 ## 3. Fetch it without running it
 Put everything under `~/teardowns/<slug>/`, and never run its code or install scripts:
 - Source repo: `git clone --depth 1 <repo> ~/teardowns/<slug>/src`, then record `git -C … rev-parse HEAD`.

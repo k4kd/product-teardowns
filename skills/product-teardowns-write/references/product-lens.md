@@ -13,7 +13,7 @@ This file says which parts of a teardown are worth the user's time. It uses buil
 | Cost control | rate limits, caching, batching, model/API choice | | |
 | Secrets | keys in the bundle? env? fetched at runtime? | | |
 | Backups and recovery | sync, conflict handling, undo | | |
-| Performance & scale | the trick that makes it fast; what it would cost at 10× | | |
+| Performance and scale | the trick that makes it fast; what it would cost at 10× | | |
 | Stack | frameworks, services, build tooling | | |
 | Keep it minimal | what was clever-small, what looks like bloat | | |
 

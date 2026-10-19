@@ -1,6 +1,6 @@
 ---
 name: product-teardowns-resources
-description: Stage of product-teardowns. Finds the three best, most information-dense resources (start, deep, mastery) for one concept, checks that each link loads, is by who it claims and fits what the learner already knows, and grows the curriculum. Roles - scout (one concept, run as parallel subagents) and collect (merge new finds into the curriculum). Run by the product-teardowns orchestrator.
+description: Stage of product-teardowns, technical mode. Finds the three best, most information-dense resources (start, deep, mastery) for one concept, checks that each link loads, is by who it claims and fits what the learner already knows, and grows the curriculum. Roles - scout (one concept, run as parallel subagents) and collect (merge new finds into the curriculum). Run by the product-teardowns orchestrator.
 license: MIT
 metadata:
   author: kunal
@@ -21,7 +21,7 @@ A resource earns its place only if it is **primary or canonical**: written by th
 | mastery | The primary source: the paper, the spec or RFC section, the original author's design doc, or the source code that defines it |
 
 ## Role: scout
-**Input:** one concept's row from `outline.md` (name, area, track, builds on), `~/learning-journal/ledger.md` and `profile.md`. **Output:** `resources/<concept-slug>.md`.
+**Input:** one concept's row from `<mdir>/outline.md` (name, area, track, builds on), `~/learning-journal/technical/ledger.md` (missing means nothing learnt yet: treat it as empty) and `profile.md`. **Output:** `<mdir>/resources/<concept-slug>.md`.
 
 **You must search the internet.** Use **WebSearch** to find candidates and **WebFetch** to open and check them. If either is listed only as a deferred tool, load it first (for example ToolSearch `select:WebSearch,WebFetch`). Any web-search MCP server that is connected works too. If no web tool is available at all, say so in your reply, pick from curriculum.md only, and write "web search unavailable" in the Checked column.
 
@@ -35,6 +35,6 @@ A resource earns its place only if it is **primary or canonical**: written by th
 5. Under **New for curriculum**, list any chosen link that isn't in curriculum.md yet, with its track. Don't edit curriculum.md yourself, because other scouts are running at the same time.
 
 ## Role: collect
-**Input:** every `resources/*.md`. **Output:** an updated `references/curriculum.md` in this skill.
+**Input:** every `<mdir>/resources/*.md`. **Output:** an updated `references/curriculum.md` in this skill.
 
-Run this once, after all the scouts. Add each **New for curriculum** link to its track in learning order, with a one-line note and "(checked <date>)". Create a track only when none fits. Skip duplicates. If this skill's folder is inside a git repo, commit with "Curriculum: add <n> resources from <target>" and push. Never force-push. If the push fails, leave the commit and say so.
+Run this once, after all the scouts. Add each **New for curriculum** link to its track in learning order, with a one-line note and "(checked <date>)". Create a track only when none fits. Skip duplicates. Commit and push only if this skill's folder is inside a git checkout of `k4kd/product-teardowns` **and** you're running for its owner (`gh api user -q .login` is `k4kd`): commit with "Curriculum: add <n> resources from <target>" and push, never force. Everyone else keeps the edit local only. Never commit in someone else's install, because it would block their `npx skills update`.

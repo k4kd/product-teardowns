@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 // One-time setup for product-teardowns. Everything lives in the user's own GitHub account:
 // GitHub login, the skills, REA built from GitHub, a private journal repo, the learner profile,
-// their own build-products-kunal (a fork, unless they own it) and their preferences.
+// the latest build-products skills (read-only; contributing is by pull request) and their preferences.
 // Run with: npx github:k4kd/product-teardowns
 import { spawnSync } from 'node:child_process';
-import { copyFileSync, existsSync, mkdirSync, readFileSync, renameSync, writeFileSync } from 'node:fs';
+import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readlinkSync, realpathSync, renameSync, rmSync, symlinkSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
@@ -55,7 +55,7 @@ function stop(message) {
 if (!existsSync(BASE) && existsSync(OLD_BASE)) renameSync(OLD_BASE, BASE); // carry over a reverse-learn install
 let config = {};
 if (existsSync(CONFIG)) {
-  try { config = JSON.parse(readFileSync(CONFIG, 'utf8')); } catch {
+  try { config = JSON.parse(readFileSync(CONFIG, 'utf8')); if (!config || typeof config !== 'object' || Array.isArray(config)) throw new Error('not an object'); } catch {
     copyFileSync(CONFIG, `${CONFIG}.bak`);
     console.log(`! ${CONFIG} was unreadable; saved a copy as config.json.bak and starting fresh.`);
   }
@@ -142,9 +142,9 @@ async function setupJournal() {
     return;
   }
 
-  mkdirSync(join(JOURNAL, 'teardowns'), { recursive: true });
+  mkdirSync(JOURNAL, { recursive: true });
   writeFileSync(join(JOURNAL, 'README.md'),
-    '# Learning journal\n\nWritten by the product-teardowns skill: profile.md (levels), ledger.md (concepts learnt), teardowns.md (index) and teardowns/ (the docs).\n');
+    '# Learning journal\n\nWritten by the product-teardowns skill: profile.md (levels per track), and one folder per track (technical/, product/, design/), each with ledger.md (concepts learnt), teardowns.md (index) and teardowns/ (the docs).\n');
   if (!run('git', ['init', '-q', '-b', 'main'], { cwd: JOURNAL }) ||
       !run('git', ['add', '-A'], { cwd: JOURNAL }) ||
       !run('git', ['commit', '-q', '-m', 'Start learning journal'], { cwd: JOURNAL })) {
@@ -163,77 +163,109 @@ async function createRepo() {
 }
 
 const LEVELS = { b: 'Beginner', i: 'Intermediate', a: 'Advanced' };
-const level = async (area) => LEVELS[(await ask(`Your level in ${area}? (b)eginner / (i)ntermediate / (a)dvanced [b]:`, 'b'))[0]?.toLowerCase()] ?? 'Beginner';
+// Level areas per mode, as in the contracts. One question per mode sets all of its areas.
+const MODES = {
+  Technical: { what: 'systems, algorithms and code', areas: ['Systems/infra', 'Algorithms', 'Code'] },
+  Product: { what: 'product management (users, growth, business, metrics)', areas: ['Product sense', 'Growth', 'Business', 'Data'] },
+  Design: { what: 'product and UI design (UX, visual craft, systems, research)', areas: ['Interaction & UX', 'Visual & UI craft', 'Systems & accessibility', 'Research & content'] },
+};
+const SKIP = 'skip';
+const level = async (what) => {
+  const a = (await ask(`Your level in ${what}? (b)eginner / (i)ntermediate / (a)dvanced / (s)kip for now [b]:`, 'b'))[0]?.toLowerCase();
+  return a === 's' ? SKIP : LEVELS[a] ?? 'Beginner';
+};
+const MIGRATE = join(dirname(fileURLToPath(import.meta.url)), '..', 'skills', 'product-teardowns-setup', 'scripts', 'migrate-journal.mjs');
 
-// Writes only the files that are missing, so a cloned journal keeps its history.
+// Moves an old flat journal into technical/, then writes profile.md if it's missing.
+// Each mode's ledger is created by its first publish, so nothing else is written here.
 async function setupLedger() {
-  const today = new Date().toLocaleDateString('en-CA'); // local YYYY-MM-DD, same as publish
-  const files = {};
-  if (!existsSync(join(JOURNAL, 'profile.md'))) {
-    if (!interactive) {
-      console.log('No terminal, so your level is not set yet. The skill will ask on its first run.');
-    } else {
-      console.log('\nA few questions so the docs start at your level.');
-      const sys = await level('systems and infrastructure');
-      const algo = await level('algorithms');
-      const code = await level('reading and writing code');
-      const goal = await ask('What do you want to be able to do in a year?', 'Build and ship my own products');
-      const depth = await ask('How deep should explanations go by default?', 'Deep: internals, trade-offs and code-level detail');
-      files['profile.md'] = `# Learner Profile\n\n## Levels\nSystems/infra: ${sys}\nAlgorithms: ${algo}\nCode: ${code}\nDefault depth: ${depth}\n\n## Goal\n${goal}\n\n## Level history\n- ${today}: started at Systems/infra ${sys}, Algorithms ${algo}, Code ${code} (setup)\n`;
-    }
+  const m = spawnSync(process.execPath, [MIGRATE], { encoding: 'utf8', env: { ...process.env, PRODUCT_TEARDOWNS_JOURNAL: JOURNAL } });
+  try { const r = JSON.parse(m.stdout); if (r.status === 'migrated') console.log('✓ Moved your earlier technical learnings into learning-journal/technical/.'); } catch {
+    console.log(`! Could not check the journal layout (${(m.stderr || '').trim()}). The skill retries on its next run.`);
   }
-  if (!existsSync(join(JOURNAL, 'ledger.md'))) {
-    files['ledger.md'] = '# Ledger\n\nEvery concept learnt, one row each. A concept appears once, under the product where it was first learnt.\n\n| Concept | Area | Learnt from | Date | Doc |\n|---|---|---|---|---|\n';
-  }
-  if (!existsSync(join(JOURNAL, 'teardowns.md'))) files['teardowns.md'] = '# Teardowns\n\n';
-  for (const [name, body] of Object.entries(files)) writeFileSync(join(JOURNAL, name), body);
+  const profileFile = join(JOURNAL, 'profile.md');
+  if (existsSync(profileFile)) return console.log('✓ Your learner profile already exists.');
+  if (!interactive) return console.log('No terminal, so your level is not set yet. The skill will ask on its first run.');
 
-  // Commit any of these files that are new or uncommitted, so a commit that failed last run is retried.
-  const paths = ['profile.md', 'ledger.md', 'teardowns.md'].filter((f) => existsSync(join(JOURNAL, f)));
-  if (!read('git', ['-C', JOURNAL, 'status', '--porcelain', '--', ...paths])) {
-    return console.log('✓ Journal files are up to date.');
+  const today = new Date().toLocaleDateString('en-CA'); // local YYYY-MM-DD, same as publish
+  console.log(`\nThere are three learning tracks: technical, product and design. A few questions so each doc starts at your level.`);
+  let body = '# Learner Profile\n';
+  const started = [];
+  for (const [mode, { what, areas }] of Object.entries(MODES)) {
+    const l = await level(what);
+    if (l === SKIP) continue; // asked on the first teardown in this mode
+    body += `\n## ${mode} levels\n${areas.map((x) => `${x}: ${l}`).join('\n')}\n`;
+    started.push(`${mode} ${l}`);
   }
-  if (!run('git', ['add', '--', ...paths], { cwd: JOURNAL }) ||
-      !run('git', ['commit', '-q', '-m', 'Add learner profile and ledger', '--', ...paths], { cwd: JOURNAL })) {
-    stop(`Could not commit ${paths.join(', ')} in ${JOURNAL}. Fix the git error above, then re-run setup.`);
+  const goal = await ask('What do you want to be able to do in a year?', 'Build and ship my own products');
+  const depth = await ask('How deep should explanations go by default?', 'Deep: internals, trade-offs and detail');
+  body += `\nDefault depth: ${depth}\n\n## Goal\n${goal}\n\n## Level history\n- ${today}: started at ${started.join(', ') || 'no levels yet'} (setup)\n`;
+  writeFileSync(profileFile, body);
+  if (!run('git', ['add', '--', 'profile.md'], { cwd: JOURNAL }) ||
+      !run('git', ['commit', '-q', '-m', 'Add learner profile', '--', 'profile.md'], { cwd: JOURNAL })) {
+    stop(`Could not commit profile.md in ${JOURNAL}. Fix the git error above, then re-run setup.`);
   }
   const pushed = !read('git', ['-C', JOURNAL, 'remote', 'get-url', 'origin']) ||
     run('git', ['push', '-q', '-u', 'origin', 'HEAD'], { cwd: JOURNAL });
-  console.log(pushed ? `✓ Saved ${paths.join(', ')}.` : '! Saved locally, but the push failed. The skill pushes again after the next teardown.');
+  console.log(pushed ? '✓ Saved your learner profile.' : '! Saved locally, but the push failed. The skill pushes again after the next teardown.');
 }
 
-// --- build-products-kunal: the owner keeps the original; everyone else gets their own fork.
+// --- build-products skills: one version, in the upstream repo. Everyone gets a read-only clone of it.
+const BUILD_SKILLS = ['build-products-kunal', 'build-products-pm-kunal', 'build-products-design-kunal'];
 async function setupBuildProducts() {
   config.buildProductsUpstream = UPSTREAM;
   const owner = UPSTREAM.split('/')[0];
   const isOwner = config.githubUser === owner;
-  const existing = [config.buildProductsPath, isOwner && LEGACY_BUILD_PRODUCTS, join(BASE, 'build-products-kunal')]
-    .find((p) => p && existsSync(join(p, '.git')));
-  if (existing) {
-    config.buildProductsPath = existing;
-    console.log(`✓ build-products-kunal is at ${existing}.`);
+  const target = [config.buildProductsPath, isOwner && LEGACY_BUILD_PRODUCTS, join(BASE, 'build-products-kunal')]
+    .find((p) => p && existsSync(join(p, '.git'))) ?? join(BASE, 'build-products-kunal');
+  if (existsSync(join(target, '.git'))) {
+    if (!run('git', ['-C', target, 'pull', '--ff-only', '--quiet'])) console.log(`! Could not update ${target}; using the copy you have.`);
   } else {
-    const target = join(BASE, 'build-products-kunal');
-    mkdirSync(BASE, { recursive: true });
     if (existsSync(target)) stop(`${target} exists but is not a git repo. Move it aside, then re-run setup.`);
-    console.log(isOwner
-      ? `Cloning ${UPSTREAM}: every teardown adds lessons to it.`
-      : `Forking ${UPSTREAM} into your GitHub account: every teardown adds lessons to your copy.`);
-    const done = isOwner
-      ? run('git', ['clone', '-q', `https://github.com/${UPSTREAM}.git`, target])
-      : run('gh', ['repo', 'fork', UPSTREAM, '--clone', '--remote'], { cwd: BASE });
-    if (!done || !existsSync(join(target, '.git'))) {
-      console.log('! Could not set up build-products-kunal. Re-run setup to try again.');
+    mkdirSync(BASE, { recursive: true });
+    if (!run('git', ['clone', '-q', `https://github.com/${UPSTREAM}.git`, target])) {
+      console.log('! Could not download the build-products skills. Re-run setup to try again.');
       return;
     }
-    config.buildProductsPath = target;
-    console.log(`✓ build-products-kunal is at ${target}.`);
   }
+  config.buildProductsPath = target;
+  console.log(`✓ The build-products skills are at ${target}.`);
+
+  // Claude Code loads them straight from the clone, so each pull updates them. Never replace a real folder.
+  const skillsDir = join(HOME, '.claude', 'skills');
+  if (existsSync(join(HOME, '.claude'))) {
+    mkdirSync(skillsDir, { recursive: true });
+    const linked = [];
+    for (const name of BUILD_SKILLS) {
+      const link = join(skillsDir, name);
+      const dest = join(target, 'skills', name);
+      if (!existsSync(dest)) continue;
+      let current = null;
+      try { current = lstatSync(link); } catch (e) { if (e.code !== 'ENOENT') { console.log(`! Could not check ${link} (${e.code}).`); continue; } }
+      if (current && !current.isSymbolicLink()) { console.log(`! ${link} is a folder, so it was left alone. Remove it to use the latest ${name}.`); continue; }
+      if (current) {
+        let real = null;
+        try { real = realpathSync(link); } catch { /* dangling */ }
+        if (real === realpathSync(dest)) { linked.push(name); continue; }
+        // Replace only a dangling link or one we made; never a link the user set up themselves.
+        const ours = real === null || readlinkSync(link).startsWith(BASE) || readlinkSync(link).startsWith(LEGACY_BUILD_PRODUCTS);
+        if (!ours) { console.log(`! ${link} points to ${readlinkSync(link)}, so it was left alone. Remove it to use the latest ${name}.`); continue; }
+        rmSync(link);
+      }
+      try { symlinkSync(dest, link, 'junction'); linked.push(name); } catch (e) { console.log(`! Could not link ${name} (${e.code}).`); }
+    }
+    if (linked.length) console.log(`✓ Linked into Claude Code: ${linked.join(', ')}.`);
+  }
+  console.log(`For other agents: npx skills add ${UPSTREAM} -g  (and npx skills update to refresh).`);
+
   if (isOwner) {
-    config.shareLessons = false;
-  } else if (interactive || config.shareLessons === undefined) {
-    config.shareLessons = await yes(`Share your teardown lessons with the author? Each teardown then opens a pull request to ${UPSTREAM}.`, config.shareLessons ?? false);
+    config.contribute = false; // the owner commits directly
+  } else if (interactive || config.contribute === undefined) {
+    config.contribute = await yes(
+      `Contribute what you learn to ${UPSTREAM}? After each teardown, a small pull request with the new lessons goes to its author, who reviews it.`,
+      config.contribute ?? config.shareLessons ?? false);
   }
+  delete config.shareLessons;
 }
 
 // --- What happens to each product's code and findings on this computer.
@@ -258,8 +290,8 @@ Everything is set up in your own GitHub account. Asking before each step, this w
   1. log you in to GitHub (installing the GitHub CLI if needed) and let git use that login
   2. install the product-teardowns skills, plus write-a-prd-kunal for the writing style
   3. build REA, the reverse-engineering tools, from its GitHub repo
-  4. create your private learning journal repo in ${JOURNAL}, then ask your level
-  5. set up your copy of build-products-kunal, which every teardown adds lessons to
+  4. create your private learning journal repo in ${JOURNAL}, then ask your level in each track
+  5. install the latest build-products skills, and ask whether you'd like to contribute lessons to them
   6. ask whether to keep each product's downloaded code and findings
 `);
 if (!interactive) console.log('No terminal detected, so setup uses safe defaults where it can.\n');

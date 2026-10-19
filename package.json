@@ -1,7 +1,7 @@
 {
   "name": "product-teardowns",
-  "version": "3.0.0",
-  "description": "Setup for the product-teardowns Agent Skill: learn engineering by reverse engineering real products.",
+  "version": "4.0.0",
+  "description": "Setup for product-teardowns: learn engineering, product management and design by tearing down real products.",
   "type": "module",
   "bin": {
     "product-teardowns": "bin/setup.mjs"

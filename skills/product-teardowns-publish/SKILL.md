@@ -12,14 +12,14 @@ metadata:
 All of this stage is one script, so it behaves the same way every time:
 
 ```bash
-node <this skill's folder>/scripts/publish.mjs --run ~/teardowns/<slug>/run
+node <this skill's folder>/scripts/publish.mjs --run ~/teardowns/<slug>/run/<mode>
 ```
 
-It reads `publish.json`, `doc.md` and the highest-numbered `readability-<n>.md` from the run folder (formats in the orchestrator's `references/contracts.md`). Then it:
+It reads `publish.json`, `doc.md` and the highest-numbered `readability-<n>.md` from the mode folder (formats in the orchestrator's `references/contracts.md`). Then it:
 1. replaces the doc's `- Readability: …` line (pending, or a result from an earlier publish) with the last run's verdict, score and answers, in both the run folder and the journal;
-2. pulls the journal, then copies the doc to `~/learning-journal/teardowns/<slug>.md`;
-3. appends one `ledger.md` row per new concept, skipping any concept already in the ledger (case-insensitive);
-4. appends the `teardowns.md` index line, once per doc;
+2. pulls the journal, then copies the doc to `~/learning-journal/<mode>/teardowns/<slug>.md` (the mode comes from publish.json);
+3. appends one `<mode>/ledger.md` row per new concept (creating that ledger on the mode's first publish), skipping any concept already in the ledger (case-insensitive);
+4. appends the `<mode>/teardowns.md` index line, once per doc;
 5. recounts the ledger per area and raises levels in `profile.md` by the level rule, adding a Level history line for each rise (a level never drops);
 6. commits only those files and pushes with `-u origin HEAD`. If the push is rejected, it pulls with `--rebase` and pushes again. It never force-pushes.
 

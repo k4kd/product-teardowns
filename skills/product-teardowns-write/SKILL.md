@@ -1,6 +1,6 @@
 ---
 name: product-teardowns-write
-description: Stage of product-teardowns. Turns teardown findings into one crisp reading doc - how the product works end to end plus every concept it uses, new ones taught in full and known ones in a line. Roles - outline (pick and order concepts against the ledger), draft (write doc.md and publish.json) and fix (apply a readability report). Run by the product-teardowns orchestrator as a subagent.
+description: Stage of product-teardowns, technical mode. Turns teardown findings into one crisp reading doc - how the product works end to end plus every concept it uses, new ones taught in full and known ones in a line. Roles - outline (pick and order concepts against the ledger), draft (write doc.md and publish.json) and fix (apply a readability report). Run by the product-teardowns orchestrator as a subagent.
 license: MIT
 metadata:
   author: kunal
@@ -12,7 +12,9 @@ metadata:
 You will be told your role: **outline**, **draft** or **fix**. Formats are in the orchestrator's `references/contracts.md`. In every role, load the **product-teardowns-style** skill (a sibling of this one) and follow it.
 
 ## Role: outline
-**Input:** `findings/index.md`, `findings/e2e.md`, `~/learning-journal/ledger.md` and `profile.md`. **Output:** `outline.md`.
+`<mdir>` is the technical mode folder, `<run>/technical/`.
+
+**Input:** `findings/index.md`, `findings/e2e.md`, `~/learning-journal/technical/ledger.md` (missing means nothing learnt yet: treat it as empty) and `profile.md`. **Output:** `<mdir>/outline.md`.
 
 1. List every concept a reader needs to understand the end-to-end trace and each area, plus everything the findings flag as "novel". Skip trivia: a concept earns its place only if the end-to-end story or a clever part depends on it.
 2. Check each one against the ledger, matching on meaning and not only the name ("HTTP caching" is "CDN caching" if that's what the row taught). **Ignore ledger rows whose Learnt from is this target and version** (`<target> <version>` from target.md). Those were added when this run was published before, and a re-run must teach them again.
@@ -22,7 +24,7 @@ You will be told your role: **outline**, **draft** or **fix**. Formats are in th
 4. Give each new concept its area (Systems/infra, Algorithms or Code) and its curriculum track (a heading in the sibling product-teardowns-resources skill's `references/curriculum.md`).
 
 ## Role: draft
-**Input:** target.md, all of `findings/`, outline.md, all of `resources/`, the profile and [product-lens.md](references/product-lens.md). **Output:** `doc.md` and `publish.json`.
+**Input:** target.md, all of `findings/`, `<mdir>/outline.md`, all of `<mdir>/resources/`, the profile and [product-lens.md](references/product-lens.md). **Output:** `<mdir>/doc.md` and `<mdir>/publish.json`.
 
 Write the doc in this order:
 
@@ -47,9 +49,9 @@ Write the doc in this order:
 > - **Pseudocode:** 5–15 lines, in the product's terms.
 > - **Cost:** time, space, and what it gives up.
 
-Then write `publish.json`: slug `<YYYY-MM-DD>-<slug>`, or with `-2`, `-3` and so on added if `~/learning-journal/teardowns/<that slug>.md` already exists from a different run (one whose Sources show a different version), the target, the version, the top lesson in one sentence, and `newConcepts` with the name and area of every concept in the outline's New concepts table.
+Then write `<mdir>/publish.json` with `"mode": "technical"`: slug `<YYYY-MM-DD>-<slug>`, or with `-2`, `-3` and so on added if `~/learning-journal/technical/teardowns/<that slug>.md` already exists from a different run (one whose Sources show a different version), the target, the version, the top lesson in one sentence, and `newConcepts` with the name and area of every concept in the outline's New concepts table.
 
 ## Role: fix
-**Input:** `doc.md` and one `readability-<n>.md`. **Output:** an updated `doc.md`.
+**Input:** `<mdir>/doc.md` and one `<mdir>/readability-<n>.md`. **Output:** an updated `<mdir>/doc.md`.
 
 Fix exactly what the report names, following the style guide, and nothing else. Never change a finding, number, verdict or resource to make the doc read more easily. If a fix needs a concept the outline doesn't have, define it inline in one plain sentence; don't add a new section.
