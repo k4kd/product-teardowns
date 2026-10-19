@@ -6,16 +6,16 @@ This file says which parts of a teardown are worth the user's time. It uses buil
 
 | Area | What they did (observed / inferred) | Verdict | Why |
 |---|---|---|---|
-| Accounts & access | auth provider, session/token handling, roles | steal / skip | |
+| Accounts and access | auth provider, session/token handling, roles | steal / skip | |
 | Data | what is stored where, local vs server, retention, deletion | | |
 | Payments | hosted checkout vs custom, licensing checks | | |
 | Errors | retries, offline behaviour, what the user sees | | |
 | Cost control | rate limits, caching, batching, model/API choice | | |
 | Secrets | keys in the bundle? env? fetched at runtime? | | |
-| Backups & recovery | sync, conflict handling, undo | | |
+| Backups and recovery | sync, conflict handling, undo | | |
 | Performance & scale | the trick that makes it fast; what it would cost at 10× | | |
 | Stack | frameworks, services, build tooling | | |
-| Minimal vs over-built | what was clever-small, what looks like bloat | | |
+| Keep it minimal | what was clever-small, what looks like bloat | | |
 
 **Verdicts:**
 - **Steal:** a good pattern the user can copy into their own products. Every steal row also goes into build-products-kunal's lessons file.

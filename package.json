@@ -1,10 +1,10 @@
 {
-  "name": "reverse-learn-kunal",
-  "version": "2.0.0",
-  "description": "Setup for the reverse-learn-kunal Agent Skill: learn engineering by reverse engineering real products.",
+  "name": "product-teardowns",
+  "version": "3.0.0",
+  "description": "Setup for the product-teardowns Agent Skill: learn engineering by reverse engineering real products.",
   "type": "module",
   "bin": {
-    "reverse-learn-kunal": "bin/setup.mjs"
+    "product-teardowns": "bin/setup.mjs"
   },
   "files": [
     "bin",

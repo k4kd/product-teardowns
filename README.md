@@ -1,4 +1,4 @@
-# reverse-learn-kunal
+# product-teardowns
 
 An Agent Skill for learning engineering by reverse engineering real products.
 
@@ -13,51 +13,76 @@ Name a product, such as an app, a binary, an Electron `.asar`, an APK, an npm pa
 
 There are no quizzes: the doc is reading material you study afterwards.
 
+## How it's built
+
+`product-teardowns` is an orchestrator. Each stage of the work is its own specialist skill, and the stages hand work to each other only through files in a run folder (`~/teardowns/<product>/run/`). So you can improve one stage without touching the others, and every later run picks the improvement up.
+
+```
+product-teardowns          orchestrator: runs the stages, talks to you, keeps the run folder
+ ├─ product-teardowns-setup        checks the journal, profile, ledger, REA and build-products repo
+ ├─ product-teardowns-find         name or link → the exact product, fetched without running it
+ ├─ product-teardowns-teardown     map → one subagent per area, in parallel → merge (REA + source)
+ ├─ product-teardowns-style        writing rules + depth by level (write and readability load it)
+ ├─ product-teardowns-resources    one web-searching subagent per new concept → 3 checked resources
+ ├─ product-teardowns-write        outline (new vs known concepts) → draft → fixes
+ ├─ product-teardowns-readability  fresh Haiku reader: comprehension, level fit, crispness (max 3 runs)
+ ├─ product-teardowns-publish      a script: ledger, levels, index, push to your private journal
+ └─ product-teardowns-feed         lessons → build-products-kunal (public), de-duplicated
+```
+
+The file formats between stages are defined once, in `skills/product-teardowns/references/contracts.md`.
+
+**To improve one stage:** edit only that stage's `SKILL.md`, then say "re-run <stage> on <product>". That re-runs the stage, and the stages after it, on the saved teardown, and keeps the old outputs as `.prev` so you can compare them. Change `contracts.md` only when a stage needs a new input or output.
+
 ## Install
 
 ```bash
-npx github:k4kd/reverse-learn-kunal
+npx github:k4kd/product-teardowns
 ```
 
-Setup asks before each step:
+Everything is set up in **your own GitHub account**. Setup asks before each step:
 
-1. **The skill:** installs it into the coding agents you choose (Claude Code, Codex, Cursor and others), using [`skills`](https://github.com/vercel-labs/skills).
-2. **REA:** runs REA's own setup (`npx rea-agents@latest setup`), which shows every change it will make and asks before applying it. The skill needs REA for teardowns, so skip this only if REA is already set up.
-3. **Your learning journal:** creates a new **private** GitHub repo cloned to `~/learning-journal/` (needs the [GitHub CLI](https://cli.github.com), logged in), or clones the one you already have. It then asks your level in systems, algorithms and code, and writes `profile.md` and an empty `ledger.md`.
+1. **GitHub login:** installs the [GitHub CLI](https://cli.github.com) with Homebrew if it's missing (macOS), and opens `gh auth login` if you aren't logged in. Then it continues.
+2. **The skills:** installs the 10 product-teardowns skills and [write-a-prd-kunal](https://github.com/k4kd/write-a-prd-kunal) (the writing style) into the coding agents you choose, using [`skills`](https://github.com/vercel-labs/skills).
+3. **REA:** clones [REA](https://github.com/morluto/rea) from GitHub into `~/.product-teardowns/`, builds it, and registers it as the `rea` MCP server in Claude Code. Every teardown then fetches REA's latest commit, builds it in a staging copy and swaps it in only if the build works, logging each attempt to `~/.product-teardowns/rea-update.log`. If GitHub is unreachable or the repo disappears, the last good local build keeps working.
+4. **Your learning journal:** creates a new **private** repo in your GitHub account, cloned to `~/learning-journal/`, or clones the one you already have. Then it asks your level in systems, algorithms and code.
+5. **build-products-kunal:** forks it into your account (its owner keeps the original), so every teardown adds lessons to *your* copy. It also asks whether to share your lessons with the author: if yes, each teardown opens a pull request to `k4kd/build-products-kunal`.
+6. **Local files:** asks whether each product's downloaded code and findings in `~/teardowns/` are kept permanently, deleted once the doc is pushed, or asked about each time.
 
-Then restart your agent and say `run reverse-learn-kunal on <product name>`.
+Your answers are saved in `~/.product-teardowns/config.json`. Re-run the setup any time to change them.
 
-**Requirements:** Node.js 18+ and git, with your git name and email set. The GitHub CLI is needed for the journal repo.
+Then restart your agent and say `run product-teardowns on <product name>`.
+
+**Requirements:** Node.js 22.19+ (for building REA) and git, with your git name and email set.
 
 **On another device:** run the same command and choose "clone the journal repo you already have".
 
-**Update:** `npx skills update` updates the skill, and `npx rea-agents@latest setup` updates REA.
-
-**Manual install** (no setup script): run `npx skills add k4kd/reverse-learn-kunal -g` and `npx rea-agents@latest setup`. Then create the journal yourself: a private repo cloned to `~/learning-journal/`. The skill asks your level on its first run.
+**Update:** `npx skills update` updates the skills. REA updates itself at the start of every teardown.
 
 ## Privacy
 
-- Your journal stays in `~/learning-journal/`, and your own private GitHub repo. This project never sends it anywhere else.
-- Lessons go to build-products-kunal, which is a **public** repo. They are written as generic patterns (for example "compute prices on the server"), never your journal, code or secrets.
-- Like any agent skill, everything the agent reads is processed by whichever AI model your agent uses. That includes the target being studied and your journal.
-- Downloaded targets go to `~/teardowns/<name>/`. The skill fetches code without running it, and it asks before running or installing anything.
+- Your journal is a private repo in your own GitHub account. This project never sends it anywhere else.
+- Lessons go to your build-products-kunal fork, which is **public** like the original. They are written as generic patterns (for example "compute prices on the server"), never your journal, code or secrets. A pull request to the author's repo is opened only if you said yes to sharing.
+- Downloaded products go to `~/teardowns/<name>/`. The skill fetches code without running it, and it asks before running or installing anything.
+- Like any agent skill, everything the agent reads is processed by whichever AI model your agent uses. That includes the product being studied and your journal.
 
 ## Use
 
-- "Run reverse-learn-kunal on openclaw" (just a name: it finds and fetches the target itself, without running it)
-- "Use reverse-learn-kunal on /Applications/Linear.app. How does it sync so fast?"
+- "Run product-teardowns on openclaw" (just a name: it finds and fetches the target itself, without running it)
+- "Use product-teardowns on /Applications/Linear.app. How does it sync so fast?"
 - "Tear down this APK and teach me how its offline mode works."
-- "Run reverse-learn-kunal on express, deeper" ("lighter" or "deeper" changes how technical the doc goes)
+- "Re-run resources on srimandir" (after improving the resources stage)
+- "Run product-teardowns on express, deeper" ("lighter" or "deeper" changes how technical the doc goes)
 
 ## Layout
 
 ```
-bin/setup.mjs                 # the npx setup (Node, no dependencies)
-skills/reverse-learn-kunal/
-  SKILL.md
-  references/doc.md           # the reading doc: structure, style overrides, readability test, journal templates, level rule
-  references/product-lens.md  # steal / skip table
-  references/curriculum.md    # tracks → start / deep / mastery resources
+bin/setup.mjs                          # the npx setup (Node, no dependencies)
+skills/product-teardowns/            # orchestrator + references/contracts.md
+skills/product-teardowns-<stage>/SKILL.md  # one folder per stage
+skills/product-teardowns-resources/references/curriculum.md
+skills/product-teardowns-write/references/product-lens.md
+skills/product-teardowns-publish/scripts/publish.mjs (+ publish.test.mjs)
 ```
 
 ## License
