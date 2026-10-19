@@ -2,7 +2,7 @@
 
 These tracks are the path to mastery. For each concept you teach, pick one **Start** (gentle, intuition-first), one **Deep** (a proper course or book) and one **Mastery** resource (the primary source, a paper or the hardest canonical text) from the matching track. Add new sources only if they are canonical and you have checked that the link loads. Every link here returned HTTP 200 on 2026-10-18.
 
-Within each track, resources are listed in learning order. Don't give a Deep or Mastery resource before the track's Start unless the profile marks that foundation Strong. Check what each resource assumes before giving it, and never give one that starts midway.
+Within each track, resources are listed in learning order. Check what each resource assumes before giving it, and give it only if the ledger or the doc already covers those foundations. Never give one that starts midway.
 
 The bar for a source is Karpathy's Zero to Hero: built from first principles by someone who has done the work, free or canonical, and still worth it in five years.
 
@@ -31,6 +31,7 @@ The bar for a source is Karpathy's Zero to Hero: built from first principles by 
 
 ## Databases and storage
 *Why it matters:* your data model is the hardest thing to change later.
+- Start: [SQLBolt](https://sqlbolt.com/): interactive SQL from zero, in the browser (checked 2026-10-19). Do this before Use The Index, Luke
 - Start: [Use The Index, Luke](https://use-the-index-luke.com/)
 - Deep: [CMU 15-445 Database Systems](https://15445.courses.cs.cmu.edu/) (Andy Pavlo; lectures on YouTube)
 - Mastery: [SQLite architecture](https://www.sqlite.org/arch.html), then read the source
@@ -51,6 +52,7 @@ The bar for a source is Karpathy's Zero to Hero: built from first principles by 
 ## Performance and observability
 *Why it matters:* "it's slow" becomes a fixable fact once you can measure it.
 - Start: [Brendan Gregg's site](https://www.brendangregg.com/): flame graphs, USE method
+- Deep: [Google SRE book: Monitoring Distributed Systems](https://sre.google/sre-book/monitoring-distributed-systems/): what "up" means in production (checked 2026-10-19)
 - Mastery: [Systems Performance, 2nd ed.](https://www.brendangregg.com/systems-performance-2nd-edition-book.html)
 
 ## Algorithms and data structures

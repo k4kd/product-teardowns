@@ -1,0 +1,17 @@
+{
+  "name": "reverse-learn-kunal",
+  "version": "2.0.0",
+  "description": "Setup for the reverse-learn-kunal Agent Skill: learn engineering by reverse engineering real products.",
+  "type": "module",
+  "bin": {
+    "reverse-learn-kunal": "bin/setup.mjs"
+  },
+  "files": [
+    "bin",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}
